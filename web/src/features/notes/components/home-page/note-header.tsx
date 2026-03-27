@@ -1,13 +1,13 @@
 import { Plus, Tags, Trash2 } from 'lucide-react'
-import { Button } from '../../../components/ui/button'
+import { Button } from '../../../../components/ui/button'
 import { NotesSearch } from './note-search'
-import ThemeToggle from '../../../components/ThemeToggle'
+import ThemeToggle from '../../../../components/ThemeToggle'
 import { useState } from 'react'
 import { TagsDialog } from './tags-dialog'
 import { useStore } from '@tanstack/react-store'
-import { setSelectionMode } from '../stores/ui/ui-action'
-import { uiStore } from '../stores/ui/ui-store'
-import { deleteNote } from '../stores/notes/note-action'
+import { setSelectionMode } from '../../stores/ui/ui-action'
+import { uiStore } from '../../stores/ui/ui-store'
+import { deleteNote } from '../../stores/notes/note-action'
 
 export function NoteHeader() {
   const [tagsOpen, setTagsOpen] = useState(false)

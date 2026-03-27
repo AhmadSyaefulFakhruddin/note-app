@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
+export const StatusResponseSchema = z.enum(['success', 'error', 'fail'])
+
 export const NoteSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   title: z.string().min(1, 'Title cannot be empty'),
   content: z.string(),
   folder: z.string().default('Personal'),
@@ -13,10 +15,20 @@ export const NoteSchema = z.object({
   updatedAt: z.date(),
 })
 
-export const UpdateNoteSchema = NoteSchema.pick({
+export const UpdateNoteInputSchema = NoteSchema.pick({
   title: true,
   content: true,
+  tags: true,
+  folder: true,
+  isPinned: true,
+  isArchived: true,
+  id: true,
 })
 
-export type Note = z.infer<typeof NoteSchema>
-export type UpdateNotePayload = z.infer<typeof UpdateNoteSchema>
+export const NoteIdInputSchema = NoteSchema.pick({ id: true })
+
+export const CreateNoteInputSchema = NoteSchema.pick({
+  title: true,
+  content: true,
+  tags: true,
+})

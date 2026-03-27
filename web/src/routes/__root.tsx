@@ -16,7 +16,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { NoteHeader } from '#/features/notes/components/note-header'
+import { NoteHeader } from '#/features/notes/components/home-page/note-header'
 import type { getNotes } from '#/features/notes/services/note.service'
 
 interface MyRouterContext {

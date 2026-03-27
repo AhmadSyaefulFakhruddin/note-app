@@ -1,6 +1,6 @@
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
-import { NoteGrid } from '#/features/notes/components/note-grid'
+import { NoteGrid } from '#/features/notes/components/home-page/note-grid'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
 

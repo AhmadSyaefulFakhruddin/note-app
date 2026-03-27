@@ -9,7 +9,7 @@ import {
   CardFooter,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { Note } from '../types/note.schema'
+import type { Note } from '../../types/note.schema'
 
 interface NoteCardProps {
   note: Note

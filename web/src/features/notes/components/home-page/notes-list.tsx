@@ -1,5 +1,5 @@
-import { EmptyNotes } from '#/features/notes/components/empty-notes'
-import { NoteCard } from '#/features/notes/components/note-card'
+import { EmptyNotes } from '#/features/notes/components/home-page/empty-notes'
+import { NoteCard } from '#/features/notes/components/home-page/note-card'
 import { getRouteApi } from '@tanstack/react-router'
 
 export function NotesList() {
