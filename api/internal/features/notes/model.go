@@ -29,5 +29,4 @@ type UpdateNoteRequest struct {
 	Tags       *[]string `json:"tags" binding:"omitempty,notblank"`
 	IsPinned   *bool     `json:"isPinned" binding:"omitempty,notblank"`
 	IsArchived *bool     `json:"isArchived" binding:"omitempty,notblank"`
-	SyncStatus *string   `json:"syncStatus" binding:"omitempty,notblank"`
 }
