@@ -2,18 +2,27 @@ import { z } from 'zod'
 
 export const StatusResponseSchema = z.enum(['success', 'error', 'fail'])
 
+export const TagsSchema = z.array(
+  z.object({
+    id: z.uuid(),
+    name: z.string(),
+  }),
+)
+
 export const NoteSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   title: z.string().min(1, 'Title cannot be empty'),
   content: z.string(),
-  folder: z.string().default('Personal'),
-  tags: z.array(z.string()),
+  folder: z.string(),
+  tags: TagsSchema.default([]),
   isPinned: z.boolean().default(false),
   isArchived: z.boolean().default(false),
   syncStatus: z.enum(['synced', 'syncing', 'error']).default('synced'),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
+
+export const NotesSchema = z.array(NoteSchema)
 
 export const UpdateNoteInputSchema = NoteSchema.pick({
   title: true,

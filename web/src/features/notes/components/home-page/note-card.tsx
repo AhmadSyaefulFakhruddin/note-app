@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from '@tanstack/react-router'
+// import { Link } from '@tanstack/react-router'
 import { Pin, Cloud, CloudOff, RefreshCw } from 'lucide-react'
 import {
   Card,
@@ -9,7 +9,7 @@ import {
   CardFooter,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { Note } from '../../types/note.schema'
+import type { Note } from '../../types/note.type'
 
 interface NoteCardProps {
   note: Note
@@ -71,11 +71,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
         <div className="flex gap-1.5 overflow-hidden">
           {note.tags.slice(0, 2).map((tag) => (
             <Badge
-              key={tag}
+              key={tag.id}
               variant="secondary"
               className="text-[10px] px-1.5 py-0 h-5 font-medium truncate max-w-20"
             >
-              {tag}
+              {tag.name}
             </Badge>
           ))}
           {note.tags.length > 2 && (

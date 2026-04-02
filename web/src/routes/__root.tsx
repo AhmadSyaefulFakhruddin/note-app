@@ -17,11 +17,10 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { NoteHeader } from '#/features/notes/components/home-page/note-header'
-import type { getNotes } from '#/features/notes/services/note.service'
+import { Button } from '#/components/ui/button'
 
 interface MyRouterContext {
   queryClient: QueryClient
-  getNotes: typeof getNotes
 }
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
@@ -50,6 +49,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   shellComponent: RootDocument,
+  errorComponent: ({ error, reset, info }) => {
+    console.log(error, '&&&&&&&&&&&&&&&&&&&&&&&&7')
+    return (
+      <div className="flex-col flex gap-3">
+        <div className="">name: {error.name}</div>
+        <div className="">message: {error.message}</div>
+        <Button onClick={reset}>reset</Button>
+        <div className="">{info?.componentStack}</div>
+      </div>
+    )
+  },
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {

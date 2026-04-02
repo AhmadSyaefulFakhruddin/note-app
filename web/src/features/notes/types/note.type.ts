@@ -1,7 +1,12 @@
 import type z from 'zod'
-import type { NoteSchema, UpdateNoteInputSchema } from './note.schema'
+import type {
+  NoteSchema,
+  NotesSchema,
+  UpdateNoteInputSchema,
+} from './note.schema'
 
 export type Note = z.infer<typeof NoteSchema>
+export type Notes = z.infer<typeof NotesSchema>
 export type UpdateNoteInput = z.infer<typeof UpdateNoteInputSchema>
 
 export type ApiResponse<T> = {

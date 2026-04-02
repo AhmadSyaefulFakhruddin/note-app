@@ -1,11 +1,14 @@
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { NoteGrid } from '#/features/notes/components/home-page/note-grid'
+import { fetchNoteListOptions } from '#/features/notes/services/note.service'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
-  loader: ({ context }) => context.getNotes(),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(fetchNoteListOptions)
+  },
   component: App,
 })
 

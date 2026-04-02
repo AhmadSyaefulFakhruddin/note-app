@@ -1,13 +1,41 @@
 package notes
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type ApiResponse struct {
+	Status  string      `json:"status"`
+	Data    interface{} `json:"data"`
+	Message string      `message:"message"`
+}
+
+type Tag struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
 
 type Note struct {
-	ID         string    `json:"id"`
+	ID         uuid.UUID   `json:"id"`
+	Title      string      `json:"title"`
+	Content    string      `json:"content"`
+	Folder     string      `json:"folder"`
+	TagsIds    []uuid.UUID `json:"idTags"`
+	IsPinned   bool        `json:"isPinned"`
+	IsArchived bool        `json:"isArchived"`
+	SyncStatus string      `json:"syncStatus"`
+	CreatedAt  time.Time   `json:"createdAt"`
+	UpdatedAt  time.Time   `json:"updatedAt"`
+}
+
+type NoteData struct {
+	ID         uuid.UUID `json:"id"`
 	Title      string    `json:"title"`
 	Content    string    `json:"content"`
 	Folder     string    `json:"folder"`
-	Tags       []string  `json:"tags"`
+	Tags       []Tag     `json:"tags"`
 	IsPinned   bool      `json:"isPinned"`
 	IsArchived bool      `json:"isArchived"`
 	SyncStatus string    `json:"syncStatus"`
@@ -16,17 +44,18 @@ type Note struct {
 }
 
 type CreateNoteRequest struct {
-	Title   string   `json:"title" binding:"required,min=1,notblank"`
-	Content string   `json:"content" binding:"omitempty,notblank"`
-	Folder  string   `json:"folder" binding:"omitempty,notblank"`
-	Tags    []string `json:"tags" binding:"omitempty,notblank"`
+	Title       string   `json:"title" binding:"required,min=1,notblank"`
+	Content     string   `json:"content" binding:"omitempty,notblank"`
+	Folder      string   `json:"folder" binding:"omitempty,notblank"`
+	Tags        []Tag    `json:"tags" binding:"omitempty,notblank"`
+	NewTagNames []string `json:"newTagNames" binding:"omitempty,notblank"`
 }
 
 type UpdateNoteRequest struct {
-	Title      *string   `json:"title" binding:"omitempty,min=1,notblank"`
-	Content    *string   `json:"content" binding:"omitempty,notblank"`
-	Folder     *string   `json:"folder" binding:"omitempty,notblank"`
-	Tags       *[]string `json:"tags" binding:"omitempty,notblank"`
-	IsPinned   *bool     `json:"isPinned" binding:"omitempty,notblank"`
-	IsArchived *bool     `json:"isArchived" binding:"omitempty,notblank"`
+	Title      *string `json:"title" binding:"omitempty,min=1,notblank"`
+	Content    *string `json:"content" binding:"omitempty,notblank"`
+	Folder     *string `json:"folder" binding:"omitempty,notblank"`
+	Tags       *[]Tag  `json:"tags" binding:"omitempty,notblank"`
+	IsPinned   *bool   `json:"isPinned" binding:"omitempty,notblank"`
+	IsArchived *bool   `json:"isArchived" binding:"omitempty,notblank"`
 }

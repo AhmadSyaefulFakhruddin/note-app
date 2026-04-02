@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react'
 import { FileText } from 'lucide-react'
 import { NoteCard } from './note-card'
-import { getRouteApi } from '@tanstack/react-router'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { fetchNoteListOptions } from '../../services/note.service'
 
 export const NoteGrid: React.FC = () => {
-  const routeApi = getRouteApi('/')
-  const notes = routeApi.useLoaderData()
+  const { data: notes } = useSuspenseQuery(fetchNoteListOptions)
+
+  if (!notes) return <div>note</div>
 
   // Sort notes: Pinned first, then by most recently updated
   const sortedNotes = useMemo(() => {

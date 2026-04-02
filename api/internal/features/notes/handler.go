@@ -15,14 +15,15 @@ func NewHandler(s Service) *Handler {
 }
 
 func (h *Handler) GetNotes(c *gin.Context) {
-	notes, err := h.service.FetchAllNotes()
+	notes := h.service.FetchAllNotes()
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch notes"})
-		return
+	response := ApiResponse{
+		Status:  "success",
+		Data:    notes,
+		Message: "success to get the notes",
 	}
 
-	c.JSON(http.StatusOK, notes)
+	c.JSON(http.StatusOK, response)
 }
 
 func (h *Handler) GetNoteDetail(c *gin.Context) {
