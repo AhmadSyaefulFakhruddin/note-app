@@ -13,8 +13,8 @@ export const NoteMetadata: React.FC<{ note: Note }> = ({ note }) => {
     <footer className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm text-muted-foreground">
       <div className="flex flex-wrap gap-2">
         {note.tags.map((tag) => (
-          <Badge key={tag} variant="secondary" className="font-normal">
-            #{tag}
+          <Badge key={tag.id} variant="secondary" className="font-normal">
+            #{tag.name}
           </Badge>
         ))}
       </div>

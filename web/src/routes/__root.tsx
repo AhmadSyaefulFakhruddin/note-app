@@ -50,13 +50,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
   shellComponent: RootDocument,
   errorComponent: ({ error, reset, info }) => {
-    console.log(error, '&&&&&&&&&&&&&&&&&&&&&&&&7')
     return (
       <div className="flex-col flex gap-3">
         <div className="">name: {error.name}</div>
         <div className="">message: {error.message}</div>
         <Button onClick={reset}>reset</Button>
-        <div className="">{info?.componentStack}</div>
+        {process.env.NODE_ENV === 'development' && (
+          <pre className="text-xs overflow-auto bg-white p-2">
+            {info?.componentStack}
+          </pre>
+        )}
+      </div>
+    )
+  },
+  notFoundComponent: () => {
+    return (
+      <div className="flex-col flex gap-3">
+        <div className="">404 - Not Found</div>
+        <Button asChild>
+          <a href="/">Go Home</a>
+        </Button>
       </div>
     )
   },

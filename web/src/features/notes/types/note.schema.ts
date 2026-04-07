@@ -4,13 +4,13 @@ export const StatusResponseSchema = z.enum(['success', 'error', 'fail'])
 
 export const TagsSchema = z.array(
   z.object({
-    id: z.uuid(),
+    id: z.string(),
     name: z.string(),
   }),
 )
 
 export const NoteSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   title: z.string().min(1, 'Title cannot be empty'),
   content: z.string(),
   folder: z.string(),
@@ -18,8 +18,8 @@ export const NoteSchema = z.object({
   isPinned: z.boolean().default(false),
   isArchived: z.boolean().default(false),
   syncStatus: z.enum(['synced', 'syncing', 'error']).default('synced'),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 })
 
 export const NotesSchema = z.array(NoteSchema)

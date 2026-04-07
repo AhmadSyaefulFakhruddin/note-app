@@ -7,7 +7,15 @@ import { fetchNoteListOptions } from '../../services/note.service'
 export const NoteGrid: React.FC = () => {
   const { data: notes } = useSuspenseQuery(fetchNoteListOptions)
 
-  if (!notes) return <div>note</div>
+  if (!notes.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-xl">
+        <FileText className="h-12 w-12 mb-4 opacity-20" />
+        <p className="text-lg font-medium">No notes found</p>
+        <p className="text-sm">Create your first note to get started.</p>
+      </div>
+    )
+  }
 
   // Sort notes: Pinned first, then by most recently updated
   const sortedNotes = useMemo(() => {
@@ -18,16 +26,6 @@ export const NoteGrid: React.FC = () => {
       return a.isPinned ? -1 : 1
     })
   }, [notes])
-
-  if (!sortedNotes.length) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-xl">
-        <FileText className="h-12 w-12 mb-4 opacity-20" />
-        <p className="text-lg font-medium">No notes found</p>
-        <p className="text-sm">Create your first note to get started.</p>
-      </div>
-    )
-  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
