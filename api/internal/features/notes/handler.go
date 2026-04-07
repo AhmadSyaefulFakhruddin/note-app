@@ -1,6 +1,7 @@
 package notes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func NewHandler(s Service) *Handler {
 func (h *Handler) GetNotes(c *gin.Context) {
 	notes := h.service.FetchAllNotes()
 
-	response := ApiResponse{
+	response := ApiResponse[[]NoteData]{
 		Status:  "success",
 		Data:    notes,
 		Message: "success to get the notes",
@@ -32,11 +33,23 @@ func (h *Handler) GetNoteDetail(c *gin.Context) {
 	note, err := h.service.FindNote(noteId)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": err.Error(), "error": err})
+		response := ApiResponse[any]{
+			Status:  "fail",
+			Data:    nil,
+			Message: fmt.Sprintf("The note id %s is not found", noteId),
+		}
+
+		c.JSON(http.StatusNotFound, response)
 		return
 	}
 
-	c.JSON(http.StatusOK, note)
+	response := ApiResponse[NoteData]{
+		Status:  "success",
+		Data:    note,
+		Message: "success to get the note",
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (h *Handler) CreateNote(c *gin.Context) {

@@ -10,7 +10,7 @@ import (
 type Service interface {
 	// notes
 	FetchAllNotes() []NoteData
-	FindNote(id string) (Note, error)
+	FindNote(id string) (NoteData, error)
 	CreateNewNote(noteData CreateNoteRequest) (uuid.UUID, error)
 	UpdateNote(newNoteData UpdateNoteRequest, id string) (uuid.UUID, error)
 	DeleteNote(id string) error
@@ -55,14 +55,35 @@ func (s *service) FetchAllNotes() []NoteData {
 	return notes
 }
 
-func (s *service) FindNote(id string) (Note, error) {
+func (s *service) FindNote(id string) (NoteData, error) {
 	noteID, err := uuid.Parse(id)
 
 	if err != nil {
-		return Note{}, fmt.Errorf("invalid note ID format")
+		return NoteData{}, fmt.Errorf("invalid note ID format")
 	}
 
-	return s.repo.GetNoteByID(noteID)
+	note, err := s.repo.GetNoteByID(noteID)
+
+	if err != nil {
+		return NoteData{}, err
+	}
+
+	noteTags, unknowTagIds := s.repo.GetTagsByIds(note.TagsIds)
+
+	fmt.Println(unknowTagIds)
+
+	return NoteData{
+		ID:         note.ID,
+		Title:      note.Title,
+		Content:    note.Content,
+		Folder:     note.Folder,
+		Tags:       noteTags,
+		IsPinned:   note.IsPinned,
+		IsArchived: note.IsArchived,
+		SyncStatus: note.SyncStatus,
+		CreatedAt:  note.CreatedAt,
+		UpdatedAt:  note.UpdatedAt,
+	}, nil
 }
 
 func (s *service) CreateNewNote(noteData CreateNoteRequest) (uuid.UUID, error) {

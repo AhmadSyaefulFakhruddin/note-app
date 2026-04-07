@@ -65,7 +65,7 @@ func GetMockData() ([]Tag, []Note) {
 			TagsIds:    []uuid.UUID{tags[1].ID}, // Personal
 			IsPinned:   false,
 			IsArchived: false,
-			SyncStatus: "pending",
+			SyncStatus: "syncing",
 			CreatedAt:  now.Add(-2 * time.Hour),
 			UpdatedAt:  now.Add(-1 * time.Hour),
 		},

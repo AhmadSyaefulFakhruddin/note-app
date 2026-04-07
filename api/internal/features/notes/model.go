@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type ApiResponse struct {
-	Status  string      `json:"status"`
-	Data    interface{} `json:"data"`
-	Message string      `message:"message"`
+type ApiResponse[T any] struct {
+	Status  string `json:"status"`
+	Data    T      `json:"data"`
+	Message string `json:"message"`
 }
 
 type Tag struct {
