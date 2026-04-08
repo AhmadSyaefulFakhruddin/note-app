@@ -17,7 +17,8 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { NoteHeader } from '#/features/notes/components/home-page/note-header'
-import { Button } from '#/components/ui/button'
+import { GlobalError } from '#/features/errors/components/GlobalError'
+import { NotFoundPage } from '#/features/errors/components/NotFound'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -51,27 +52,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
   errorComponent: ({ error, reset, info }) => {
     return (
-      <div className="flex-col flex gap-3">
-        <div className="">name: {error.name}</div>
-        <div className="">message: {error.message}</div>
-        <Button onClick={reset}>reset</Button>
-        {process.env.NODE_ENV === 'development' && (
-          <pre className="text-xs overflow-auto bg-white p-2">
-            {info?.componentStack}
-          </pre>
-        )}
-      </div>
+      <GlobalError
+        error={error}
+        reset={reset}
+        componentStack={info?.componentStack}
+      />
     )
+    // return <ErrorPage  />
   },
   notFoundComponent: () => {
-    return (
-      <div className="flex-col flex gap-3">
-        <div className="">404 - Not Found</div>
-        <Button asChild>
-          <a href="/">Go Home</a>
-        </Button>
-      </div>
-    )
+    return <NotFoundPage />
   },
 })
 
@@ -82,7 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="font-sans antialiased wrap-anywhere bg-background text-foreground">
         <TanStackQueryProvider>
           <div className="container min-h-screen mx-auto max-w-6xl py-10 space-y-8">
             {/* Header */}

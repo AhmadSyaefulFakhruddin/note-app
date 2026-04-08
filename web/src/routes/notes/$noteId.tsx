@@ -9,9 +9,9 @@ import { NoteNotFoundComponent } from '#/features/notes/components/note-detail/N
 export const Route = createFileRoute('/notes/$noteId')({
   // 1. Loader fetches data server-side to guarantee SEO and eliminate loading spinners
   loader: async ({ params: { noteId }, context: { queryClient } }) => {
-    await queryClient.fetchQuery(fetchNoteByIdOptions(noteId))
+    const note = await queryClient.ensureQueryData(fetchNoteByIdOptions(noteId))
 
-    const note = await fetchNoteById({ data: { id: noteId } })
+    // const note = await fetchNoteById({ data: { id: noteId } })
 
     if (!note) {
       throw notFound()

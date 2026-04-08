@@ -1,18 +1,17 @@
-// import { Button } from '@/components/ui/button'
-// import { Edit2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Edit2 } from 'lucide-react'
 import { NoteBreadcrumbs } from '#/features/notes/components/note-detail/NoteBreadcrumbs'
 import { NoteActions } from '#/features/notes/components/note-detail/NoteActions'
 import { NoteMetadata } from '#/features/notes/components/note-detail/NoteMetadata'
 import { useState } from 'react'
 import { fetchNoteByIdOptions } from '../../services/note.service'
-import { useLoaderData, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { NoteEditor } from './NoteEditor'
 
 export function NoteView() {
-  //   const { noteId } = useParams({ from: '/notes/$noteId' })
-  //   const { data: note } = useSuspenseQuery(fetchNoteByIdOptions(noteId))
-
-  const note = useLoaderData({ from: '/notes/$noteId' })
+  const { noteId } = useParams({ from: '/notes/$noteId' })
+  const { data: note } = useSuspenseQuery(fetchNoteByIdOptions(noteId))
 
   // Local state for toggling modes (doesn't need global store since it's page-specific)
   const [isEditing, setIsEditing] = useState(false)
@@ -27,14 +26,14 @@ export function NoteView() {
               {note.title}
             </h1>
             <div className="flex items-center gap-2 mt-1">
-              {/* <Button
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsEditing(true)}
               >
                 <Edit2 className="mr-2 h-4 w-4" />
                 Edit
-              </Button> */}
+              </Button>
               <NoteActions isPinned={note.isPinned} />
             </div>
           </div>
@@ -42,14 +41,14 @@ export function NoteView() {
       </header>
 
       <main className="flex-1 flex flex-col">
-        {/* {isEditing ? (
+        {isEditing ? (
           <NoteEditor note={note} onCancel={() => setIsEditing(false)} />
-        ) : ( */}
-        <section className="prose prose-neutral dark:prose-invert max-w-none text-lg leading-relaxed">
-          {/* If using Markdown, a renderer like ReactMarkdown would go here */}
-          <p className="whitespace-pre-wrap">{note.content}</p>
-        </section>
-        {/* )} */}
+        ) : (
+          <section className="prose prose-neutral dark:prose-invert max-w-none text-lg leading-relaxed">
+            {/* If using Markdown, a renderer like ReactMarkdown would go here */}
+            <p className="whitespace-pre-wrap">{note.content}</p>
+          </section>
+        )}
       </main>
 
       {!isEditing && <NoteMetadata note={note} />}

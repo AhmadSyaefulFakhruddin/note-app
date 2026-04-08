@@ -1,8 +1,17 @@
 import { Button } from '#/components/ui/button'
+import { ErrorPage } from '#/features/errors/components/ErrorPage'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, FileQuestion } from 'lucide-react'
 
 export function NoteNotFoundComponent() {
+  return (
+    <ErrorPage
+      title="Note not found"
+      message={`The note you are looking for doesn't exist, has been deleted, or you
+        might not have permission to view it.`}
+    />
+  )
+
   return (
     <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center text-center min-h-[60vh]">
       <div className="bg-muted p-6 rounded-full mb-6">
