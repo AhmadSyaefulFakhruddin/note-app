@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Check, X } from 'lucide-react'
+import type { Note } from '../../types/note.type'
 
 interface NoteEditorProps {
   note: Note

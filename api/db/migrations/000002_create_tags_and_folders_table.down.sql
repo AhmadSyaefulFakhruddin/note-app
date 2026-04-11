@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS note_tags;
+
+ALTER TABLE notes
+    DROP COLUMN IF EXISTS folder_id,
+    ADD COLUMN folder_ids UUID[] DEFAULT '{}',
+    ADD COLUMN tag_ids UUID[] DEFAULT '{}';
+
+DROP TABLE IF EXISTS folders;
+DROP TABLE IF EXISTS tags;

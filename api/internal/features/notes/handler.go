@@ -35,7 +35,6 @@ func (h *Handler) GetNoteDetail(c *gin.Context) {
 	if err != nil {
 		response := ApiResponse[any]{
 			Status:  "fail",
-			Data:    nil,
 			Message: fmt.Sprintf("The note id %s is not found", noteId),
 		}
 
@@ -56,21 +55,35 @@ func (h *Handler) CreateNote(c *gin.Context) {
 	var noteData CreateNoteRequest
 
 	if err := c.ShouldBindJSON(&noteData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Validation failed",
-			"error":   err.Error(),
-		})
+		response := ApiResponse[any]{
+			Status:  "fail",
+			Message: "Validation failed",
+			Data:    err.Error(),
+		}
+
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	noteId, err := h.service.CreateNewNote(noteData)
+	newNote, err := h.service.CreateNewNote(noteData)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "Failed to create note"})
+		response := ApiResponse[any]{
+			Status:  "fail",
+			Message: "Failed to create note",
+			Data:    err.Error(),
+		}
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "success to create the note", "id": noteId})
+	response := ApiResponse[NoteData]{
+		Status:  "success",
+		Data:    newNote,
+		Message: "success to create the note",
+	}
+
+	c.JSON(http.StatusCreated, response)
 }
 
 func (h *Handler) UpdateNote(c *gin.Context) {
@@ -103,4 +116,16 @@ func (h *Handler) DeleteNote(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success to delete the note", "id": id})
+}
+
+func (h *Handler) GetTags(c *gin.Context) {
+	tags := h.service.GetTags()
+
+	response := ApiResponse[[]Tag]{
+		Status:  "success",
+		Data:    tags,
+		Message: "success to get the tags",
+	}
+
+	c.JSON(http.StatusOK, response)
 }

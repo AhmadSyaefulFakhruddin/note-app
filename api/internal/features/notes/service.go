@@ -11,12 +11,13 @@ type Service interface {
 	// notes
 	FetchAllNotes() []NoteData
 	FindNote(id string) (NoteData, error)
-	CreateNewNote(noteData CreateNoteRequest) (uuid.UUID, error)
+	CreateNewNote(noteData CreateNoteRequest) (NoteData, error)
 	UpdateNote(newNoteData UpdateNoteRequest, id string) (uuid.UUID, error)
 	DeleteNote(id string) error
 
 	// tags
 	CreateNewTag(newTagNames []string) []Tag
+	GetTags() []Tag
 }
 
 type NoteUpdater func(n *Note)
@@ -68,10 +69,7 @@ func (s *service) FindNote(id string) (NoteData, error) {
 		return NoteData{}, err
 	}
 
-	noteTags, unknowTagIds := s.repo.GetTagsByIds(note.TagsIds)
-
-	fmt.Println(unknowTagIds)
-
+	noteTags, _ := s.repo.GetTagsByIds(note.TagsIds)
 	return NoteData{
 		ID:         note.ID,
 		Title:      note.Title,
@@ -86,16 +84,34 @@ func (s *service) FindNote(id string) (NoteData, error) {
 	}, nil
 }
 
-func (s *service) CreateNewNote(noteData CreateNoteRequest) (uuid.UUID, error) {
+func (s *service) CreateNewNote(noteData CreateNoteRequest) (NoteData, error) {
 	now := time.Now()
 
-	noteId := uuid.New()
+	tagIds := make([]uuid.UUID, len(noteData.TagsIds))
+
+	for i, tagId := range noteData.TagsIds {
+		parsedTagId, err := uuid.Parse(tagId)
+
+		if err != nil {
+			return NoteData{}, fmt.Errorf("invalid tag ID format: %s", tagId)
+		}
+
+		tagIds[i] = parsedTagId
+	}
+
+	tags, unknowTagIds := s.repo.GetTagsByIds(tagIds)
+
+	if len(unknowTagIds) > 0 {
+		return NoteData{}, fmt.Errorf("some tag IDs are not found: %v", unknowTagIds)
+	}
 
 	newTags := s.CreateNewTag(noteData.NewTagNames)
 
-	noteTag := append(noteData.Tags, newTags...)
+	newTagIds := getTagIds(newTags)
 
-	tagIds := getTagIds(noteTag)
+	newNoteTagIds := append(tagIds, newTagIds...)
+
+	noteId := uuid.New()
 
 	s.repo.StoreNewNote(Note{
 		ID:         noteId,
@@ -107,10 +123,21 @@ func (s *service) CreateNewNote(noteData CreateNoteRequest) (uuid.UUID, error) {
 		Title:      noteData.Title,
 		Content:    noteData.Content,
 		Folder:     noteData.Folder,
-		TagsIds:    tagIds,
+		TagsIds:    newNoteTagIds,
 	})
 
-	return noteId, nil
+	return NoteData{
+		ID:         noteId,
+		Title:      noteData.Title,
+		Content:    noteData.Content,
+		Folder:     noteData.Folder,
+		Tags:       append(tags, newTags...),
+		IsPinned:   false,
+		IsArchived: false,
+		SyncStatus: "synced",
+		CreatedAt:  now,
+		UpdatedAt:  now,
+	}, nil
 }
 
 func (s *service) CreateNewTag(newTagNames []string) []Tag {
@@ -122,6 +149,8 @@ func (s *service) CreateNewTag(newTagNames []string) []Tag {
 			Name: tagName,
 		}
 	}
+
+	s.repo.CreateNewTag(newTags)
 
 	return newTags
 }
@@ -192,6 +221,10 @@ func (s *service) DeleteNote(id string) error {
 	return s.repo.DeleteNote(noteID)
 }
 
+func (s *service) GetTags() []Tag {
+	return s.repo.GetAllTags()
+}
+
 // helper
 func getTagIds(tags []Tag) []uuid.UUID {
 	ids := make([]uuid.UUID, len(tags))
@@ -240,6 +273,7 @@ func updateTags(tags *[]Tag) NoteUpdater {
 		}
 	}
 }
+
 func updateIsPinned(isPinned *bool) NoteUpdater {
 	return func(n *Note) {
 		if isPinned != nil {

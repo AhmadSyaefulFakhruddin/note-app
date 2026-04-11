@@ -49,7 +49,7 @@ func GetMockData() ([]Tag, []Note) {
 			ID:         uuid.MustParse("a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1"),
 			Title:      "Q3 Project Roadmap",
 			Content:    "Drafting the milestones for the upcoming quarter.",
-			Folder:     "Projects",
+			Folder:     "Projects/baru",
 			TagsIds:    []uuid.UUID{tags[0].ID, tags[3].ID}, // Work, Urgent
 			IsPinned:   true,
 			IsArchived: false,

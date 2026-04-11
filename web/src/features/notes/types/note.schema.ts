@@ -24,6 +24,15 @@ export const NoteSchema = z.object({
 
 export const NotesSchema = z.array(NoteSchema)
 
+export const CreateNoteInputSchema = NoteSchema.pick({
+  title: true,
+  content: true,
+  tags: true,
+  folder: true,
+}).extend({
+  newTagNames: z.array(z.string()).default([]),
+})
+
 export const UpdateNoteInputSchema = NoteSchema.pick({
   title: true,
   content: true,
@@ -35,9 +44,3 @@ export const UpdateNoteInputSchema = NoteSchema.pick({
 })
 
 export const NoteIdInputSchema = NoteSchema.pick({ id: true })
-
-export const CreateNoteInputSchema = NoteSchema.pick({
-  title: true,
-  content: true,
-  tags: true,
-})

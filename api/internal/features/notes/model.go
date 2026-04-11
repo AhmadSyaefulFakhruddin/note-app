@@ -47,7 +47,7 @@ type CreateNoteRequest struct {
 	Title       string   `json:"title" binding:"required,min=1,notblank"`
 	Content     string   `json:"content" binding:"omitempty,notblank"`
 	Folder      string   `json:"folder" binding:"omitempty,notblank"`
-	Tags        []Tag    `json:"tags" binding:"omitempty,notblank"`
+	TagsIds     []string `json:"tagIds" binding:"omitempty,notblank"`
 	NewTagNames []string `json:"newTagNames" binding:"omitempty,notblank"`
 }
 
