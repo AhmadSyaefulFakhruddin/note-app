@@ -1,8 +1,8 @@
 package notes
 
 import (
-	"fmt"
 	"net/http"
+	"note-app-api/internal/features/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,117 +15,36 @@ func NewHandler(s Service) *Handler {
 	return &Handler{service: s}
 }
 
-func (h *Handler) GetNotes(c *gin.Context) {
-	notes := h.service.FetchAllNotes()
-
-	response := ApiResponse[[]NoteData]{
-		Status:  "success",
-		Data:    notes,
-		Message: "success to get the notes",
-	}
-
-	c.JSON(http.StatusOK, response)
-}
-
-func (h *Handler) GetNoteDetail(c *gin.Context) {
-	var noteId = c.Param("id")
-
-	note, err := h.service.FindNote(noteId)
-
+func (h *Handler) GetAllNotes(c *gin.Context) {
+	notes, err := h.service.GetAllNotes(c.Request.Context())
 	if err != nil {
-		response := ApiResponse[any]{
-			Status:  "fail",
-			Message: fmt.Sprintf("The note id %s is not found", noteId),
-		}
+		errorCode, errorRes := response.Error(err)
 
-		c.JSON(http.StatusNotFound, response)
+		c.JSON(errorCode, errorRes)
 		return
 	}
 
-	response := ApiResponse[NoteData]{
-		Status:  "success",
-		Data:    note,
-		Message: "success to get the note",
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, response.SuccessResponse(notes, "Success get the notes"))
 }
 
 func (h *Handler) CreateNote(c *gin.Context) {
-	var noteData CreateNoteRequest
+	var newNoteData CreateNoteRequest
 
-	if err := c.ShouldBindJSON(&noteData); err != nil {
-		response := ApiResponse[any]{
-			Status:  "fail",
-			Message: "Validation failed",
-			Data:    err.Error(),
-		}
+	if err := c.ShouldBindBodyWithJSON(&newNoteData); err != nil {
+		errorCode, errorRes := response.Error(err)
 
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(errorCode, errorRes)
 		return
 	}
 
-	newNote, err := h.service.CreateNewNote(noteData)
+	newNote, err := h.service.CreateNote(c.Request.Context(), newNoteData)
 
 	if err != nil {
-		response := ApiResponse[any]{
-			Status:  "fail",
-			Message: "Failed to create note",
-			Data:    err.Error(),
-		}
-		c.JSON(http.StatusBadRequest, response)
+		errorCode, errorRes := response.Error(err)
+
+		c.JSON(errorCode, errorRes)
 		return
 	}
 
-	response := ApiResponse[NoteData]{
-		Status:  "success",
-		Data:    newNote,
-		Message: "success to create the note",
-	}
-
-	c.JSON(http.StatusCreated, response)
-}
-
-func (h *Handler) UpdateNote(c *gin.Context) {
-	var updateNoteData UpdateNoteRequest
-	id := c.Param("id")
-
-	if err := c.ShouldBindJSON(&updateNoteData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "Invalid request body"})
-		return
-	}
-
-	noteId, err := h.service.UpdateNote(updateNoteData, id)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "message": "Failed to update note"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "success to update the note", "id": noteId})
-}
-
-func (h *Handler) DeleteNote(c *gin.Context) {
-	id := c.Param("id")
-
-	err := h.service.DeleteNote(id)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error(), "message": "Failed to delete note"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "success to delete the note", "id": id})
-}
-
-func (h *Handler) GetTags(c *gin.Context) {
-	tags := h.service.GetTags()
-
-	response := ApiResponse[[]Tag]{
-		Status:  "success",
-		Data:    tags,
-		Message: "success to get the tags",
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response.SuccessResponse(newNote, "Successfully created new note"))
 }

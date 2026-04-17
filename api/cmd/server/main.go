@@ -5,7 +5,9 @@ import (
 	"log"
 	"note-app-api/internal/config"
 	"note-app-api/internal/database"
+	"note-app-api/internal/features/folders"
 	"note-app-api/internal/features/notes"
+	"note-app-api/internal/features/tags"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -15,7 +17,6 @@ import (
 func main() {
 	r := gin.Default()
 
-	// ask again
 	ctx := context.Background()
 
 	dbURL := "postgres://postgres:123qweas@localhost:5432/note_db?sslmode=disable"
@@ -29,13 +30,23 @@ func main() {
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("notblank", config.NotBlank)
+		v.RegisterValidation("validfolder", config.ValidFolder)
 	}
 
-	repository := notes.NewRepository()
-	noteService := notes.NewService(repository)
-	noteHandler := notes.NewHandler(noteService)
+	foldersRepository := folders.NewRepository(dbPool)
+	foldersService := folders.NewService(foldersRepository)
+	foldersHandler := folders.NewHandler(foldersService)
+	folders.RegisterRoutes(r, foldersHandler)
 
-	notes.RegisterRoutes(r, noteHandler)
+	tagsRepository := tags.NewRepository(dbPool)
+	tagsService := tags.NewService(tagsRepository)
+	tagsHandler := tags.NewHandler(tagsService)
+	tags.RegisterRoute(r, tagsHandler)
+
+	notesRepository := notes.NewRepository(dbPool)
+	notesService := notes.NewService(notesRepository, foldersService)
+	notesHandler := notes.NewHandler(notesService)
+	notes.RegisterRoutes(r, notesHandler)
 
 	r.Run()
 }
